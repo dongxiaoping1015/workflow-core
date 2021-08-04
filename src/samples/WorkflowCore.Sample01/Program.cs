@@ -15,10 +15,11 @@ namespace WorkflowCore.Sample01
 
             //start the workflow host
             var host = serviceProvider.GetService<IWorkflowHost>();
-            host.RegisterWorkflow<HelloWorldWorkflow>();        
+            host.RegisterWorkflow<HelloWorldWorkflow, MyDataClass>();        
             host.Start();            
 
             host.StartWorkflow("HelloWorld");
+            //host.PublishEvent("MyEvent", "0", "hello");
             
             Console.ReadLine();
             host.Stop();
