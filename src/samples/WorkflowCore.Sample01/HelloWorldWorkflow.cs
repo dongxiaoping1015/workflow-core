@@ -13,8 +13,8 @@ namespace WorkflowCore.Sample01
         {
             builder
                 .StartWith(context => Console.WriteLine("Hello"))
-                .Schedule(dta => TimeSpan.FromSeconds(5)).Do(schedule => schedule
-                    .StartWith(context => Console.WriteLine("Doing scheduled tasks"))
+                .Recur(data => TimeSpan.FromSeconds(5), data => data.Counter > 5 ).Do(recur => recur
+                    .StartWith(context => Console.WriteLine("Doing recurring task"))
                 )
                 .Then(context => Console.WriteLine("Doing normal tasks"));
 
