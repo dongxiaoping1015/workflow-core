@@ -12,10 +12,20 @@ namespace WorkflowCore.Sample01
         public void Build(IWorkflowBuilder<MyDataClass> builder)
         {
             builder
-                .StartWith(context => Console.WriteLine("Hello"))
-                .Recur(data => TimeSpan.FromSeconds(5), data => data.Counter > 5 ).Do(recur => recur
-                    .StartWith(context => Console.WriteLine("Doing recurring task"))
+                .StartWith(context => Console.WriteLine("Begin"))
+                .Saga(saga => saga
+                    .StartWith(context => Console.WriteLine("Task 1"))
+                    .CompensateWith(context => Console.WriteLine("Undo Task 1"))
+                    .Then(context =>
+                    {
+                        Console.WriteLine("Task 2");
+                        throw new Exception("Ex");
+                    })
+                    .CompensateWith(context => Console.WriteLine("Undo Task 2"))
+                    .Then(context => Console.WriteLine("Task 3"))
+                    .CompensateWith(context => Console.WriteLine("Undo Task 3"))
                 )
+                .CompensateWith(context => Console.WriteLine("Undo All"))
                 .Then(context => Console.WriteLine("Doing normal tasks"));
 
         }
