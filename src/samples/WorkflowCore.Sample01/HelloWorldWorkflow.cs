@@ -13,11 +13,13 @@ namespace WorkflowCore.Sample01
         {
             builder
                 .StartWith<HelloWorld>()
-                .ForEach(data => new List<int>() {1, 2, 3, 4,})
-                    .Do(x => x
-                        .StartWith<CustomMessage>()
-                            .Input(step => step.Message, (data, context) => context.Item.ToString())
-                        .Then<DoSomething>())
+                .While(data => data.Counter < 3)
+                .Do(x => x
+                    .StartWith<DoSomething>()
+                        .Input(step => step.Message, data => data.Counter.ToString())
+                    .Then<IncrementStep>()
+                        .Input(step => step.Value1, data => data.Counter)
+                        .Output(data => data.Counter, step => step.Value2))
                 .Then<GoodbyeWorld>();
         }
 

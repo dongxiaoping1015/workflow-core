@@ -3,13 +3,15 @@ using WorkflowCore.Interface;
 using WorkflowCore.Models;
 
 namespace WorkflowCore.Sample01
-{    
-    public class DoSomething : StepBody
+{
+    public class IncrementStep : StepBody
     {
-        public string Message { get; set; } = "";
+        public int Value1 { get; set; }
+        public int Value2 { get; set; }
+
         public override ExecutionResult Run(IStepExecutionContext context)
         {
-            Console.WriteLine($"Doing something...\n{ Message }");
+            Value2 = Value1 + 1;
             return ExecutionResult.Next();
         }
     }
