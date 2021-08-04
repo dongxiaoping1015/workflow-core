@@ -15,14 +15,11 @@ namespace WorkflowCore.Sample01
 
             //start the workflow host
             var host = serviceProvider.GetService<IWorkflowHost>();
-            host.RegisterWorkflow<HelloWorldWorkflow, MyDataClass>();        
-            host.Start();            
+            host.RegisterWorkflow<HelloWorldWorkflow, MyDataClass>();
+            host.Start();
 
-            host.StartWorkflow("HelloWorld", new MyDataClass
-            {
-                Value1 = "two",
-            });
-            
+            host.StartWorkflow("HelloWorld");
+
             Console.ReadLine();
             host.Stop();
         }
@@ -34,6 +31,8 @@ namespace WorkflowCore.Sample01
             services.AddLogging();
             services.AddWorkflow();
             //services.AddWorkflow(x => x.UseMongoDB(@"mongodb://localhost:27017", "workflow"));
+            services.AddTransient<CustomMessage>();
+            services.AddTransient<DoSomething>();
             services.AddTransient<GoodbyeWorld>();
             
             var serviceProvider = services.BuildServiceProvider();

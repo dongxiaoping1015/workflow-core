@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
@@ -10,21 +11,14 @@ namespace WorkflowCore.Sample01
     {
         public void Build(IWorkflowBuilder<MyDataClass> builder)
         {
-            var branch1 = builder.CreateBranch()
-                .StartWith<CustomMessage>()
-                    .Input(step => step.Message, data => "hi from 1")
-                .Then<CustomMessage>()
-                    .Input(step => step.Message, data => "bye from 1");
-            var branch2 = builder.CreateBranch()
-                .StartWith<CustomMessage>()
-                .Input(step => step.Message, data => "hi from 2")
-                .Then<CustomMessage>()
-                .Input(step => step.Message, data => "bye from 2");
             builder
                 .StartWith<HelloWorld>()
-                .Decide(data => data.Value1)
-                    .Branch((data, outcome) => data.Value1 == "one", branch1)
-                    .Branch((data, outcome) => data.Value1 == "two", branch2);
+                .ForEach(data => new List<int>() {1, 2, 3, 4,})
+                    .Do(x => x
+                        .StartWith<CustomMessage>()
+                            .Input(step => step.Message, (data, context) => context.Item.ToString())
+                        .Then<DoSomething>())
+                .Then<GoodbyeWorld>();
         }
 
         public string Id => "HelloWorld";
