@@ -13,13 +13,14 @@ namespace WorkflowCore.Sample01
         {
             builder
                 .StartWith<HelloWorld>()
-                .While(data => data.Counter < 3)
-                .Do(x => x
-                    .StartWith<DoSomething>()
-                        .Input(step => step.Message, data => data.Counter.ToString())
-                    .Then<IncrementStep>()
-                        .Input(step => step.Value1, data => data.Counter)
-                        .Output(data => data.Counter, step => step.Value2))
+                .If(data => data.Counter < 3).Do(then => then
+                    .StartWith<CustomMessage>()
+                    .Input(step => step.Message, data => "Value is less than 3")
+                )
+                .If(data => data.Counter < 5).Do(then => then
+                    .StartWith<CustomMessage>()
+                    .Input(step => step.Message, data => "Value is less than 5")
+                )
                 .Then<GoodbyeWorld>();
         }
 
