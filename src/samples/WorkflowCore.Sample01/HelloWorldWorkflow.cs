@@ -13,14 +13,21 @@ namespace WorkflowCore.Sample01
         {
             builder
                 .StartWith<HelloWorld>()
-                .If(data => data.Counter < 3).Do(then => then
-                    .StartWith<CustomMessage>()
-                    .Input(step => step.Message, data => "Value is less than 3")
-                )
-                .If(data => data.Counter < 5).Do(then => then
-                    .StartWith<CustomMessage>()
-                    .Input(step => step.Message, data => "Value is less than 5")
-                )
+                .Parallel()
+                .Do(then =>
+                    then.StartWith<DoSomething>()
+                            .Input(step => step.Message, data => "Do 1")
+                            .Delay(s => TimeSpan.FromSeconds(5))
+                        .Then<CustomMessage>()
+                            .Input(step => step.Message, data => "Then Do 1")
+                    )
+                .Do(then =>
+                    then.StartWith<DoSomething>()
+                            .Input(step => step.Message, data => "Do 2")
+                        .Then<CustomMessage>()
+                            .Input(step => step.Message, data => "Then Do 2")
+                    )
+                .Join()
                 .Then<GoodbyeWorld>();
         }
 
