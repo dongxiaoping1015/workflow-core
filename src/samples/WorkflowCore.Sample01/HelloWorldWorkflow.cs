@@ -10,12 +10,21 @@ namespace WorkflowCore.Sample01
     {
         public void Build(IWorkflowBuilder<MyDataClass> builder)
         {
+            var branch1 = builder.CreateBranch()
+                .StartWith<CustomMessage>()
+                    .Input(step => step.Message, data => "hi from 1")
+                .Then<CustomMessage>()
+                    .Input(step => step.Message, data => "bye from 1");
+            var branch2 = builder.CreateBranch()
+                .StartWith<CustomMessage>()
+                .Input(step => step.Message, data => "hi from 2")
+                .Then<CustomMessage>()
+                .Input(step => step.Message, data => "bye from 2");
             builder
                 .StartWith<HelloWorld>()
-                .Activity("activity-1", data => data.Value1)
-                    .Output(data => data.Value2, step => step.Result)
-                .Then<CustomMessage>()
-                    .Input(step => step.Message, data => data.Value2);
+                .Decide(data => data.Value1)
+                    .Branch((data, outcome) => data.Value1 == "one", branch1)
+                    .Branch((data, outcome) => data.Value1 == "two", branch2);
         }
 
         public string Id => "HelloWorld";

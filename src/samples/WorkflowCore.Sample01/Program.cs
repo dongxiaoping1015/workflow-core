@@ -18,15 +18,10 @@ namespace WorkflowCore.Sample01
             host.RegisterWorkflow<HelloWorldWorkflow, MyDataClass>();        
             host.Start();            
 
-            host.StartWorkflow("HelloWorld");
-
-            var activity = host.GetPendingActivity("activity-1", "worker1", TimeSpan.FromMinutes(1)).Result;
-
-            if (activity != null)
+            host.StartWorkflow("HelloWorld", new MyDataClass
             {
-                Console.WriteLine(activity.Parameters);
-                host.SubmitActivitySuccess(activity.Token, "Some response data");
-            }
+                Value1 = "two",
+            });
             
             Console.ReadLine();
             host.Stop();
