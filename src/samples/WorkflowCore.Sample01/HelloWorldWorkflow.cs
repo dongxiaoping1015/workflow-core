@@ -12,23 +12,12 @@ namespace WorkflowCore.Sample01
         public void Build(IWorkflowBuilder<MyDataClass> builder)
         {
             builder
-                .StartWith<HelloWorld>()
-                .Parallel()
-                .Do(then =>
-                    then.StartWith<DoSomething>()
-                            .Input(step => step.Message, data => "Do 1")
-                            .Delay(s => TimeSpan.FromSeconds(5))
-                        .Then<CustomMessage>()
-                            .Input(step => step.Message, data => "Then Do 1")
-                    )
-                .Do(then =>
-                    then.StartWith<DoSomething>()
-                            .Input(step => step.Message, data => "Do 2")
-                        .Then<CustomMessage>()
-                            .Input(step => step.Message, data => "Then Do 2")
-                    )
-                .Join()
-                .Then<GoodbyeWorld>();
+                .StartWith(context => Console.WriteLine("Hello"))
+                .Schedule(dta => TimeSpan.FromSeconds(5)).Do(schedule => schedule
+                    .StartWith(context => Console.WriteLine("Doing scheduled tasks"))
+                )
+                .Then(context => Console.WriteLine("Doing normal tasks"));
+
         }
 
         public string Id => "HelloWorld";
