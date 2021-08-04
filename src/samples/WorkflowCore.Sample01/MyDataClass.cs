@@ -5,9 +5,9 @@ namespace WorkflowCore.Sample01
 {
     public class MyDataClass
     {
-        public string Value { get; set; }
+        public string Value1 { get; set; } = "default Value1";
 
-        public int Value2 { get; set; }
+        public string Value2 { get; set; }
 
         public int Value3 { get; set; }
 

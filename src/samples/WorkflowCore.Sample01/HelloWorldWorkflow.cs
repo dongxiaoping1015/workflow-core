@@ -11,15 +11,11 @@ namespace WorkflowCore.Sample01
         public void Build(IWorkflowBuilder<MyDataClass> builder)
         {
             builder
-                .StartWith(context => ExecutionResult.Next())
-                .WaitFor("MyEvent", data => "0")
-                .Output(data => data.Value, step => step.EventData)
+                .StartWith<HelloWorld>()
+                .Activity("activity-1", data => data.Value1)
+                    .Output(data => data.Value2, step => step.Result)
                 .Then<CustomMessage>()
-                .Input(step => step.Message, data => "The data from the event is " + data.Value);
-            //builder                
-            //    .UseDefaultErrorBehavior(WorkflowErrorHandling.Suspend)
-            //    .StartWith<HelloWorld>()                
-            //    .Then<GoodbyeWorld>();
+                    .Input(step => step.Message, data => data.Value2);
         }
 
         public string Id => "HelloWorld";

@@ -19,7 +19,14 @@ namespace WorkflowCore.Sample01
             host.Start();            
 
             host.StartWorkflow("HelloWorld");
-            //host.PublishEvent("MyEvent", "0", "hello");
+
+            var activity = host.GetPendingActivity("activity-1", "worker1", TimeSpan.FromMinutes(1)).Result;
+
+            if (activity != null)
+            {
+                Console.WriteLine(activity.Parameters);
+                host.SubmitActivitySuccess(activity.Token, "Some response data");
+            }
             
             Console.ReadLine();
             host.Stop();
