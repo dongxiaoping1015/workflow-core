@@ -25,7 +25,7 @@ namespace WorkflowCore.Sample01
                     .Then(context => Console.WriteLine("Task 3"))
                     .CompensateWith(context => Console.WriteLine("Undo Task 3"))
                 )
-                .CompensateWith(context => Console.WriteLine("Undo All"))
+                .OnError(Models.WorkflowErrorHandling.Retry, TimeSpan.FromSeconds(5))
                 .Then(context => Console.WriteLine("Doing normal tasks"));
 
         }
