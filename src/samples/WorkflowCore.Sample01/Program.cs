@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using WorkflowCore.Interface;
+using WorkflowCore.Sample01.Middleware;
 using WorkflowCore.Sample01.Steps;
 
 namespace WorkflowCore.Sample01
@@ -15,7 +17,7 @@ namespace WorkflowCore.Sample01
 
             //start the workflow host
             var host = serviceProvider.GetService<IWorkflowHost>();
-            host.RegisterWorkflow<HelloWorldWorkflow, MyDataClass>();
+            host.RegisterWorkflow<HelloWorldWorkflow, MyWorkflowParams>();
             host.Start();
 
             host.StartWorkflow("HelloWorld");
@@ -30,11 +32,23 @@ namespace WorkflowCore.Sample01
             IServiceCollection services = new ServiceCollection();
             services.AddLogging();
             services.AddWorkflow();
+            //services.AddWorkflow(x => x.UseSqlServer(@"Server=.;Database=WorkflowCore;uid=sa;pwd=123456", true, true));
             //services.AddWorkflow(x => x.UseMongoDB(@"mongodb://localhost:27017", "workflow"));
+            services.AddWorkflowStepMiddleware<AddMetadataToLogsMiddleware>();
+            services.AddWorkflowMiddleware<AddDescriptionWorkflowMiddleware>();
+            services.AddWorkflowMiddleware<PrintWorkflowSummaryMiddleware>();
             services.AddTransient<CustomMessage>();
             services.AddTransient<DoSomething>();
             services.AddTransient<GoodbyeWorld>();
-            
+
+            //services.AddTransient<IDescriptiveWorkflowParams, MyWorkflowParams>();
+
+            services.AddLogging(cfg =>
+            {
+                cfg.AddConsole(x => x.IncludeScopes = true);
+                cfg.AddDebug();
+            });
+
             var serviceProvider = services.BuildServiceProvider();
 
             return serviceProvider;

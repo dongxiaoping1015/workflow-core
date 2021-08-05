@@ -7,9 +7,9 @@ using WorkflowCore.Sample01.Steps;
 
 namespace WorkflowCore.Sample01
 {
-    public class HelloWorldWorkflow : IWorkflow<MyDataClass>
+    public class HelloWorldWorkflow : IWorkflow<MyWorkflowParams>
     {
-        public void Build(IWorkflowBuilder<MyDataClass> builder)
+        public void Build(IWorkflowBuilder<MyWorkflowParams> builder)
         {
             builder
                 .StartWith(context => Console.WriteLine("Begin"))
@@ -19,7 +19,6 @@ namespace WorkflowCore.Sample01
                     .Then(context =>
                     {
                         Console.WriteLine("Task 2");
-                        throw new Exception("Ex");
                     })
                     .CompensateWith(context => Console.WriteLine("Undo Task 2"))
                     .Then(context => Console.WriteLine("Task 3"))
